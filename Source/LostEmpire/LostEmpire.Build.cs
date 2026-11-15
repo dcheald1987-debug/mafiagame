@@ -13,7 +13,20 @@ public class LostEmpire : ModuleRules
 			"Engine",
 			"InputCore",
 			"EnhancedInput",
-			"ChaosVehicles"
+			"ChaosVehicles",
+			"PhysicsCore",
+			"AIModule",
+			"NavigationSystem",
+			"UMG"
+		});
+
+		PublicIncludePaths.AddRange(new string[]
+		{
+			"LostEmpire",
+			"LostEmpire/Mission",
+			"LostEmpire/Vehicle",
+			"LostEmpire/UI",
+			"LostEmpire/Empire"
 		});
 	}
 }

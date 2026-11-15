@@ -10,5 +10,7 @@ class LOSTEMPIRE_API ALEGameMode : public AGameModeBase
 	GENERATED_BODY()
 
 public:
+	ALEGameMode();
+
 	virtual void StartPlay() override;
 };
