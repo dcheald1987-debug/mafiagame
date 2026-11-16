@@ -21,6 +21,29 @@ enum class ELEOrderType : uint8
 	Hit
 };
 
+/** Gangsters street orders — free real-time command (not week-wait). */
+UENUM(BlueprintType)
+enum class ELEStreetOrder : uint8
+{
+	None,
+	MoveScout,
+	EnterBuilding,
+	EnterCar,
+	HitAndRun,
+	DriveBy
+};
+
+UENUM(BlueprintType)
+enum class ELEMissionId : uint8
+{
+	M0_Favor,
+	M1_Dock,
+	M2_Answer,
+	M3_DockWar,
+	M4_Cool,
+	M5_Complete
+};
+
 UENUM(BlueprintType)
 enum class ELEHoodRole : uint8
 {
@@ -57,6 +80,15 @@ enum class ELEAssignmentState : uint8
 	Failed,
 	Arrested,
 	Dead
+};
+
+UENUM(BlueprintType)
+enum class ELEDistrictId : uint8
+{
+	Levee,
+	Brickyard,
+	HaldenRow,
+	AmesHill
 };
 
 USTRUCT(BlueprintType)

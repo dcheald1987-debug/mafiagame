@@ -16,6 +16,7 @@ class LOSTEMPIRE_API ALECityCameraPawn : public APawn
 public:
 	ALECityCameraPawn();
 
+	virtual void BeginPlay() override;
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 	virtual void Tick(float DeltaSeconds) override;
 
@@ -31,7 +32,7 @@ protected:
 	TObjectPtr<UCameraComponent> Camera;
 
 	UPROPERTY(EditAnywhere, Category = "Camera")
-	float PanSpeed = 2200.f;
+	float PanSpeed = 2600.f;
 
 	/** Ortho width limits (Gangsters-style zoom, not perspective arm length). */
 	UPROPERTY(EditAnywhere, Category = "Camera")
@@ -41,7 +42,14 @@ protected:
 	float MaxArmLength = 7000.f;
 
 	UPROPERTY(EditAnywhere, Category = "Camera")
-	float ZoomSpeed = 350.f;
+	float ZoomSpeed = 420.f;
+
+	/** Keep the focus over the Levee greybox (includes Brickyard stub). */
+	UPROPERTY(EditAnywhere, Category = "Camera")
+	FVector2D BoundsMin = FVector2D(-4800.f, -3600.f);
+
+	UPROPERTY(EditAnywhere, Category = "Camera")
+	FVector2D BoundsMax = FVector2D(4800.f, 3600.f);
 
 	float ForwardAxis = 0.f;
 	float RightAxis = 0.f;

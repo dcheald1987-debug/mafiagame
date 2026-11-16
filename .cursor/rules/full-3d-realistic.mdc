@@ -1,0 +1,18 @@
+---
+description: Lost Empire art must be full 3D and realistic — no sticker façades or Plane sprites
+alwaysApply: true
+---
+
+# Full 3D realistic art (Lost Empire)
+
+## Hard rules
+- Buildings, cars, characters, street props: **real 3D meshes** (StaticMesh / SkeletalMesh), not flat stickers.
+- **Never** use Engine `Plane` meshes for world art (ortho camera wedges).
+- **Never** dress gameplay with thin FacadeCube “poster” façades as the final look — use ExternalBuildings / Fab / modular 3D kits.
+- Materials: lit PBR (base + normal + roughness) with mild emissive fill if needed for iso readability — not masked 2D cards.
+- Cars sit **on road curb lanes** with period proportions; avenues should stay wide enough for car length/width (target ~480uu road width for ~260–320uu cars). Characters are 3D silhouettes or mannequins until real skeletal meshes land.
+- Gangsters 2 is **gameplay density / camera feel** reference only — not an excuse for painted cubes.
+
+## Allowed temporary work
+- Greybox cubes while placing a block, then swap to 3D mesh in the same pass when assets exist (`Content/Art/Empire/ExternalBuildings`).
+- Python dress scripts may scale/fit meshes; they must not leave sticker façades as the shipped look.

@@ -5,6 +5,8 @@
 #include "LEEmpireTypes.h"
 #include "LESiteActor.generated.h"
 
+class UTextRenderComponent;
+
 UCLASS()
 class LOSTEMPIRE_API ALESiteActor : public AActor
 {
@@ -13,11 +15,16 @@ class LOSTEMPIRE_API ALESiteActor : public AActor
 public:
 	ALESiteActor();
 
+	virtual void BeginPlay() override;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<USceneComponent> Root;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UStaticMeshComponent> Marker;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<UTextRenderComponent> Label;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Empire")
 	FName SiteId;
@@ -42,7 +49,12 @@ public:
 
 	void RefreshColor();
 
-	/** Python-friendly setup (enums as bytes). */
 	UFUNCTION(BlueprintCallable, Category = "Empire")
 	void Configure(FName InSiteId, FText InDisplayName, uint8 InKind, uint8 InOwner, FName InBlockId, int32 InPayout, int32 InHeat);
+
+	UFUNCTION(BlueprintCallable, Category = "Empire")
+	void SetSelected(bool bSelected);
+
+protected:
+	bool bSelected = false;
 };

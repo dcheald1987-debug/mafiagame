@@ -9,9 +9,7 @@ class ALEHoodAgent;
 class ALESiteActor;
 
 /**
- * Plan → Working Week → Results. Owns cash, heat, story beat, rival script.
- * Keyboard during Plan: 1-3 select hood, C/W/R/H set order, Q/E cycle site, Enter start week.
- * During Working: Space toggles 1x/3x. During Results: Enter next plan.
+ * Plan → Working Week → Results. Owns cash, heat, story spine, rival AI, police raids.
  */
 UCLASS()
 class LOSTEMPIRE_API ALEWeekDirector : public AActor
@@ -48,8 +46,23 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Empire")
 	void ToggleSpeed();
 
+	UFUNCTION(BlueprintCallable, Category = "Empire")
+	void TryBribePolice();
+
+	UFUNCTION(BlueprintCallable, Category = "Empire")
+	void CycleTravelDistrict(int32 Direction);
+
+	UFUNCTION(BlueprintCallable, Category = "Empire")
+	void ConfirmDistrictTravel();
+
 	UFUNCTION(BlueprintPure, Category = "Empire")
 	FText GetHudBlock() const;
+
+	UFUNCTION(BlueprintPure, Category = "Empire")
+	ALEHoodAgent* GetSelectedHood() const;
+
+	UFUNCTION(BlueprintPure, Category = "Empire")
+	ALESiteActor* GetSelectedSite() const;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Empire")
 	ELEWeekPhase Phase = ELEWeekPhase::Plan;
@@ -63,6 +76,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Empire")
 	int32 Heat = 0;
 
+	/** 0 Favor, 1 Sal dock, 2 Harlan answers, 3 Dock war, 4 Ames quiet, 5 spine complete. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Empire")
 	int32 StoryBeat = 0;
 
@@ -80,6 +94,42 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Empire")
 	bool bBrickyardStubUnlocked = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Empire")
+	bool bBrickyardUnlocked = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Empire")
+	bool bHaldenRowUnlocked = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Empire")
+	bool bAmesHillUnlocked = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Empire")
+	ELEDistrictId CurrentDistrict = ELEDistrictId::Levee;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Empire")
+	ELEDistrictId TravelPreviewDistrict = ELEDistrictId::Levee;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Empire")
+	bool bDockWarOpen = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Empire")
+	bool bDockWarWon = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Empire")
+	bool bStorySpineComplete = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Empire")
+	bool bFullOrdersUnlocked = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Empire")
+	bool bPoliceOnStreet = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Empire")
+	bool bRaidThisWeek = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Empire")
+	bool bRaidForecast = false;
 
 	UPROPERTY(EditAnywhere, Category = "Empire")
 	float WeekDurationSeconds = 45.f;
@@ -109,13 +159,27 @@ protected:
 	void ResolveFinishedAssignments();
 	void ResolveAssignment(FLEHoodAssignment& Assignment, ALEHoodAgent* Hood, ALESiteActor* Site);
 	void RunRivalScript();
+	void PickRivalJob(ALEHoodAgent* Rival, TSet<FName>& ClaimedSites);
+	int32 ScoreRivalSite(const ALEHoodAgent* Rival, const ALESiteActor* Site) const;
+	ELEOrderType PreferRivalOrder(const ALEHoodAgent* Rival, const ALESiteActor* Site) const;
+	void EnsureHarlanWarCrew();
 	void ApplyHeatDecay();
 	void EvaluateStoryGates();
+	void SyncDistrictUnlocks();
+	void PushStateToGameInstance();
+	void PullStateFromGameInstance();
+	void DetectCurrentDistrictFromMap();
+	void UpdatePolicePresence();
+	void ResolvePoliceRaid(const TSet<FName>& PlayerWatchedSites);
+	bool TryHeatArrest(ALEHoodAgent* Hood, FLEHoodAssignment& Assignment);
 	void BindInput();
+	bool IsDistrictUnlocked(ELEDistrictId District) const;
+	void CollectUnlockedDistricts(TArray<ELEDistrictId>& Out) const;
 	ALEHoodAgent* FindHood(FName Id) const;
 	ALESiteActor* FindSite(FName Id) const;
-	ALEHoodAgent* GetSelectedHood() const;
-	ALESiteActor* GetSelectedSite() const;
+	FString GetBeatBriefing() const;
+	FString GetStoryBeatName() const;
+	bool PlayerOwns(FName SiteId) const;
 
 	UFUNCTION()
 	void InputSelectHood1();
@@ -123,6 +187,10 @@ protected:
 	void InputSelectHood2();
 	UFUNCTION()
 	void InputSelectHood3();
+	UFUNCTION()
+	void InputSelectHood4();
+	UFUNCTION()
+	void InputSelectHood5();
 	UFUNCTION()
 	void InputOrderCollect();
 	UFUNCTION()
@@ -139,6 +207,14 @@ protected:
 	void InputConfirm();
 	UFUNCTION()
 	void InputToggleSpeed();
+	UFUNCTION()
+	void InputBribe();
+	UFUNCTION()
+	void InputDistrictPrev();
+	UFUNCTION()
+	void InputDistrictNext();
+	UFUNCTION()
+	void InputDistrictTravel();
 
 	UPROPERTY()
 	TArray<TObjectPtr<ALEHoodAgent>> Hoods;
@@ -151,8 +227,25 @@ protected:
 
 	TSet<FName> SitesPlayerTouchedLastWeek;
 	bool bHadHitLastWeek = false;
+	bool bRecruitedThisWeek = false;
+	bool bBribedThisWeek = false;
+	bool bCallBoxWatched = false;
+	bool bCallBoxWatchedLastWeek = false;
 	bool bInputBound = false;
 	int32 WeekCashDelta = 0;
 	int32 WeekArrests = 0;
 	int32 WeekDeaths = 0;
+	int32 DockHoldWeeks = 0;
+	int32 WeekRivalFlips = 0;
+	int32 WeekRivalBlocked = 0;
+	FString WeekRaidNote;
+
+	/** Ship polish: Results idle auto-advance; Working overrun force-finish. */
+	float ResultsIdleSeconds = 0.f;
+	float WorkingElapsedSeconds = 0.f;
+	int32 SoftLockEscapes = 0;
+	bool bFinishWeekGuard = false;
+
+	UPROPERTY()
+	TObjectPtr<AActor> PoliceMarker;
 };

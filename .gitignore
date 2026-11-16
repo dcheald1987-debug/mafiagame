@@ -2,6 +2,9 @@ Binaries/
 DerivedDataCache/
 Intermediate/
 Saved/
+Build/
+Packaged/
+Art/Fab/
 .vs/
 .vscode/
 .idea/
@@ -13,3 +16,6 @@ Saved/
 *.VC.opendb
 *.code-workspace
 .vsconfig
+**/__pycache__/
+*.pyc
+.ignore

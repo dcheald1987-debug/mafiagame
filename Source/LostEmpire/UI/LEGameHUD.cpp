@@ -1,78 +1,83 @@
 #include "LEGameHUD.h"
 
-#include "LEWeekDirector.h"
+#include "LEDayNightDirector.h"
+#include "LEEmpireOrganizerWidget.h"
+#include "LEGangDossierWidget.h"
 #include "LEServiceEntranceDirector.h"
+#include "LEStreetDirector.h"
+#include "LEWeekDirector.h"
+#include "Blueprint/UserWidget.h"
 #include "Engine/Canvas.h"
 #include "Engine/Engine.h"
 #include "Kismet/GameplayStatics.h"
 
+void ALEGameHUD::BeginPlay()
+{
+	Super::BeginPlay();
+
+	APlayerController* PC = GetOwningPlayerController();
+	if (!PC)
+	{
+		return;
+	}
+
+	DossierWidget = CreateWidget<ULEGangDossierWidget>(PC, ULEGangDossierWidget::StaticClass());
+	if (DossierWidget)
+	{
+		DossierWidget->AddToViewport(20);
+	}
+
+	// Compact organizer stays for cash/heat; street dossier is primary.
+	OrganizerWidget = CreateWidget<ULEEmpireOrganizerWidget>(PC, ULEEmpireOrganizerWidget::StaticClass());
+	if (OrganizerWidget)
+	{
+		OrganizerWidget->AddToViewport(10);
+	}
+}
+
 void ALEGameHUD::DrawHUD()
 {
 	Super::DrawHUD();
+
 	if (!Canvas || !GEngine)
 	{
 		return;
 	}
 
-	if (ALEWeekDirector* Week = Cast<ALEWeekDirector>(
-			UGameplayStatics::GetActorOfClass(GetWorld(), ALEWeekDirector::StaticClass())))
+	// Always draw Chicago clock / date / day-night / speed (top-right).
+	if (ALEDayNightDirector* Clock = Cast<ALEDayNightDirector>(
+			UGameplayStatics::GetActorOfClass(GetWorld(), ALEDayNightDirector::StaticClass())))
 	{
-		const float W = Canvas->ClipX;
-		const float TopH = 36.f;
-		const float SideW = FMath::Min(420.f, W * 0.32f);
-		const float SideH = Canvas->ClipY * 0.55f;
+		const FString Line = FString::Printf(
+			TEXT("%s   %s   %s   %s"),
+			*Clock->GetDateText().ToString(),
+			*Clock->GetClockText().ToString(),
+			Clock->bIsNight ? TEXT("NIGHT") : TEXT("DAY"),
+			*Clock->GetSpeedText().ToString());
+		const float X = FMath::Max(40.f, Canvas->ClipX - 520.f);
+		DrawText(Line, FLinearColor(0.95f, 0.9f, 0.78f), X, 48.f, GEngine->GetMediumFont(), 1.15f, false);
 
-		// Top bar (Gangsters header strip)
-		DrawRect(FLinearColor(0.45f, 0.38f, 0.28f, 0.92f), 0.f, 0.f, W, TopH);
-		DrawText(
-			TEXT("SAINT LORNE  —  THE LEVEE"),
-			FLinearColor(0.95f, 0.9f, 0.78f),
-			24.f,
-			8.f,
-			GEngine->GetMediumFont(),
-			1.1f,
-			false);
-
-		// Left plan / status panel
-		DrawRect(FLinearColor(0.55f, 0.48f, 0.36f, 0.88f), 12.f, TopH + 12.f, SideW, SideH);
-		DrawRect(FLinearColor(0.35f, 0.3f, 0.22f, 0.95f), 12.f, TopH + 12.f, SideW, 28.f);
-
-		const FString Block = Week->GetHudBlock().ToString();
-		TArray<FString> Lines;
-		Block.ParseIntoArrayLines(Lines);
-		float Y = TopH + 48.f;
-		for (const FString& Line : Lines)
-		{
-			DrawText(Line, FLinearColor(0.1f, 0.08f, 0.05f), 24.f, Y, GEngine->GetSmallFont(), 1.05f, false);
-			Y += 16.f;
-			if (Y > TopH + SideH)
-			{
-				break;
-			}
-		}
-
-		// Bottom-right clock / speed
-		const float BoxW = 160.f;
-		const float BoxH = 64.f;
-		DrawRect(FLinearColor(0.55f, 0.48f, 0.36f, 0.9f), W - BoxW - 16.f, Canvas->ClipY - BoxH - 16.f, BoxW, BoxH);
-		DrawText(
-			FString::Printf(TEXT("%.0fx"), Week->TimeDilation),
-			FLinearColor(0.1f, 0.08f, 0.05f),
-			W - BoxW + 40.f,
-			Canvas->ClipY - BoxH + 4.f,
-			GEngine->GetLargeFont(),
-			1.4f,
-			false);
-		return;
+		const int32 Rise = Clock->GetSunriseMinutes();
+		const int32 Set = Clock->GetSunsetMinutes();
+		const FString SunLine = FString::Printf(
+			TEXT("Chicago sunrise %d:%02d  sunset %d:%02d"),
+			Rise / 60, Rise % 60, Set / 60, Set % 60);
+		DrawText(SunLine, FLinearColor(0.75f, 0.72f, 0.62f), X, 72.f, GEngine->GetMediumFont(), 0.95f, false);
 	}
 
-	// Legacy C01 HUD if that director is present instead.
-	ALEServiceEntranceDirector* Director = Cast<ALEServiceEntranceDirector>(
-		UGameplayStatics::GetActorOfClass(GetWorld(), ALEServiceEntranceDirector::StaticClass()));
-	if (!Director)
+	// Empire UI lives in UMG. Canvas DrawHUD only covers legacy C01 maps without a WeekDirector.
+	if (OrganizerWidget)
 	{
 		return;
 	}
 
-	DrawText(TEXT("C01 legacy map"), FLinearColor::White, 40.f, 40.f, GEngine->GetMediumFont(), 1.f, false);
+	if (UGameplayStatics::GetActorOfClass(GetWorld(), ALEWeekDirector::StaticClass()))
+	{
+		return;
+	}
+
+	if (UGameplayStatics::GetActorOfClass(GetWorld(), ALEServiceEntranceDirector::StaticClass()))
+	{
+		DrawText(TEXT("C01 legacy map"), FLinearColor::White, 40.f, 40.f, GEngine->GetMediumFont(), 1.f, false);
+	}
 }

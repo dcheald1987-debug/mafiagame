@@ -8,7 +8,8 @@ Generate after script lock. 48 kHz mono WAV. Dry. Import to `Content/Audio/Voice
 |---|---|---|
 | Eddie | Player briefing echo | Dry, working-class, same as C01 bible |
 | Sal | Beat 1 dock demand | Quiet, formal |
-| WLOR | Week open sting text | Local station, flat |
+| WLOR | Week open / war sting | Local station, flat |
+| Ames contact | Beat 4 cool-down | Soft, bureaucratic |
 
 ## Lines
 
@@ -23,6 +24,25 @@ Generate after script lock. 48 kHz mono WAV. Dry. Import to `Content/Audio/Voice
 - EMP_0010 Sal: The warehouse on the water. Hold it until I say otherwise.
 - EMP_0011 Eddie: And if Harlan is already inside?
 - EMP_0012 Sal: Then you were not watching hard enough.
+
+### Beat 2 — Harlan answers
+
+- EMP_0020 Eddie: Harlan answered. He brought a third gun.
+- EMP_0021 Eddie: Hold the dock one more week. Do not give it back.
+
+### Beat 3 — Dock war
+
+- EMP_0030 WLOR: Gunfire on the waterfront. The Levee is choosing sides.
+- EMP_0031 Eddie: Warehouse and Hawser Bar. Both. Or we lose the street.
+
+### Beat 4 — Ames watches
+
+- EMP_0040 Ames: Cool the street. We are watching the heat.
+- EMP_0041 Eddie: Hold what we took. No more noise than we need.
+
+### Beat 5 — Spine complete
+
+- EMP_0050 Eddie: Dock war is over. Brickyard waits when you are ready.
 
 ### Working week barks (Flash model, one take each)
 

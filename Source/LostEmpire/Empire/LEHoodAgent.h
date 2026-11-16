@@ -6,6 +6,8 @@
 #include "LEHoodAgent.generated.h"
 
 class ALESiteActor;
+class UTextRenderComponent;
+class UStaticMeshComponent;
 
 UCLASS()
 class LOSTEMPIRE_API ALEHoodAgent : public ACharacter
@@ -15,6 +17,7 @@ class LOSTEMPIRE_API ALEHoodAgent : public ACharacter
 public:
 	ALEHoodAgent();
 
+	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Empire")
@@ -41,17 +44,39 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Empire")
 	int32 WeeksOut = 0;
 
+	/** Hit that went badly — next Hit is riskier (Nicky / any wounded). */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Empire")
+	bool bWounded = false;
+
 	void BeginAssignment(ELEOrderType Order, ALESiteActor* Site);
 	void CancelAssignment();
 	bool IsAvailable() const { return WeeksOut <= 0 && AssignmentState != ELEAssignmentState::Dead; }
+	ALESiteActor* GetTargetSite() const { return TargetSite; }
 
 	UFUNCTION(BlueprintCallable, Category = "Empire")
 	void Configure(FName InHoodId, FText InDisplayName, uint8 InRole, uint8 InFaction, int32 InLoyalty);
 
+	UFUNCTION(BlueprintCallable, Category = "Empire")
+	void SetSelected(bool bSelected);
+
+	void RefreshAppearance();
+
 protected:
+	void MoveTowardTarget(float DeltaSeconds);
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UStaticMeshComponent> IsoMarker;
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UTextRenderComponent> NameLabel;
+
 	UPROPERTY()
 	TObjectPtr<ALESiteActor> TargetSite;
 
+	UPROPERTY(EditAnywhere, Category = "Empire")
+	float MoveSpeed = 520.f;
+
+	bool bSelected = false;
 	float WorkTimer = 0.f;
 	float WorkDuration = 2.5f;
 };

@@ -1,70 +1,86 @@
 # Lost Empire — Gangsters hybrid lock
 
-Bird’s-eye empire week over Saint Lorne. Story is a spine of weeks, not a driving campaign.
+Bird’s-eye Saint Lorne. **Not a wait-week sim.** Play is real-time street command; the story advances by **missions**, not by clocking Plan→Working→Results.
+
+## Core feel (Gangsters)
+
+- Dense isometric streets, hoodlums + civilians, cars and buildings you can enter.
+- **Click a gang member** → left dossier → give orders. Characters **move freely** at all times.
+- Storyline = mission chain (Sal / dock / Harlan / Ames). Completing objectives unlocks the next beat — you do not sit through empty weeks to progress.
 
 ## Loop
 
-1. **Story beat** (short text / VO) sets the week’s demand.
-2. **Plan week** — assign each hood one order and one site. Unlimited time.
-3. **Working week** — real-time bird’s-eye. Hoods walk to sites and resolve. Clock 1x / 3x. Space starts/ends when ready; week also ends when all assignments resolve or the timer hits zero.
-4. **Results** — cash, heat, arrests, dead, blocks held. Then next plan, or a story gate.
+1. **Mission briefing** (text / VO) — what Sal (or the street) wants now.
+2. **Street play (real-time)** — select hoods, walk/drive, enter buildings, scout, hit-and-run, drive-by. No phase lock that freezes movement.
+3. **Mission resolve** — objective met (or failed): cash, heat, arrests, story gate.
+4. **Next mission** — spine advances. Optional “week” stamp is flavor/economy tick, not a gate you wait on.
 
-## The Levee — eight sites
+Legacy Plan/Working/Results remains as a soft economy overlay (collect routes, heat decay) but **must not block free move or mission play**.
 
-| ID | Name | Kind | Owner start | Collect $ | Notes |
-|---|---|---|---|---|---|
-| S01 | Pell’s Garage | Racket | Player | 40 | Safe house. Watch holds the block. |
-| S02 | Corvo Cafe | Business | Player | 55 | Sal’s front. Low heat on Collect. |
-| S03 | Dock Warehouse A | Racket | Contested | 80 | Story beat 1 target. |
-| S04 | Hawser Bar | Business | Rival | 50 | Harlan crew drinks here. |
-| S05 | Call Box Corner | Street | Neutral | 0 | Recruit only. |
-| S06 | Levee Boarding | Business | Contested | 35 | Soft Collect. |
-| S07 | Rope Walk | Block | Rival | 0 | Watch / Hit turf. |
-| S08 | Freight Office | Racket | Rival | 70 | High Collect, high heat. |
+## Street orders (always available)
 
-Blocks: GarageBlock (S01–S02), DockBlock (S03), BarBlock (S04–S05), RopeBlock (S06–S07), FreightBlock (S08).
+| Order | Input | Behavior |
+|---|---|---|
+| Move / Scout | Click hood → ground/block | Free path; scout scores the block (low heat) |
+| Enter building | Click hood → building/site | Path to door; occupy; Collect/Watch/mission interact |
+| Enter car | Click hood → car | Board; enables drive-by |
+| Hit and run | Click hood → rival/site | Approach, brief fight, leave |
+| Drive-by | Hood in car → target | Scripted pass, heat spike, pressure |
 
-## Hoods (player start)
+Economy mapping: building Collect/Watch; Hit-and-run / Drive-by → Hit pressure; Scout → intel / soft Watch.
 
-| ID | Name | Role | Loyalty | Notes |
+## Characters
+
+| Type | Role |
+|---|---|
+| **Hoodlum** | Player / rival gang. Clickable. Dossier + orders. |
+| **Civilian** | Ambient. Wander sidewalks; flee on gunfire/heat. |
+
+Player start hoods: Eddie Voss (bagman), Nicky Ferro (enforcer), Nora Pell (recruiter). Rival: Harlan crew on the street.
+
+## The Levee — eight sites (mission anchors)
+
+| ID | Name | Kind | Owner start | Notes |
 |---|---|---|---|---|
-| H01 | Eddie Voss | Bagman | 60 | Player face. Better Collect. |
-| H02 | Nicky Ferro | Enforcer | 50 | Better Hit. Fragile after wounds. |
-| H03 | Nora Pell | Recruiter | 70 | Better Recruit. Will not Hit. |
+| S01 | Pell’s Garage | Racket | Player | Safe house |
+| S02 | Corvo Cafe | Business | Player | Sal’s front |
+| S03 | Dock Warehouse A | Racket | Contested | Mission beat 1–3 focus |
+| S04 | Hawser Bar | Business | Rival | Dock war |
+| S05 | Call Box Corner | Street | Neutral | Recruit / cool heat |
+| S06 | Levee Boarding | Business | Contested | Soft collect |
+| S07 | Rope Walk | Block | Rival | Turf |
+| S08 | Freight Office | Racket | Rival | High risk collect |
 
-Roster cap for slice: 5. Recruit from S05 only in v1.
+## Story missions (spine)
 
-## Orders
+Full table: `Design/Hybrid/StorySpine.md`. Delivered as **active missions**, not “survive N weeks”:
 
-| Order | Who | Resolves when | Effect |
-|---|---|---|---|
-| Collect | Bagman preferred | Arrive + short shake | +cash, +heat if site rival/contested |
-| Watch | Any | Stand until week end | Block resists rival claim |
-| Recruit | Recruiter preferred | Arrive + contact | +1 hood if under cap (once per week) |
-| Hit | Enforcer preferred | Arrive + fight | Rival hood/site damaged; +heat; risk of death |
-
-## Rival stub — Harlan crew
-
-Two hoods: **Quinn** (enforcer), **Bridget** (bagman). Weekly script:
-
-- Week N even: Collect S04 or S08 if they hold it; else Watch RopeBlock.
-- Week N odd: Hit a contested site the player Collected last week, or Watch DockBlock.
-
-No full AI brain. Script reads last week’s player actions from the Week Director.
+- **M0 Favor** — Collect Corvo, Watch Garage (tutorial click orders).
+- **M1 Dock** — Hold / take Dock Warehouse for Sal.
+- **M2 Answer** — Keep dock under Harlan pressure.
+- **M3 Dock war** — Warehouse + Hawser Bar.
+- **M4 Cool** — Hold both with Heat ≤ 2.
+- **M5 Complete** — Spine done; districts open.
 
 ## Heat
 
-0 clean → 1 noticed → 2 watched → 3 raid risk → 4 bust. Collect on rival sites and Hits raise heat. Watch does not. At 3+, a patrol can arrest one hood on a Hit/Collect for 2 weeks. Heat decays by 1 at the start of each Plan if no Hit last week.
+0→4 as before. Hits and drive-bys raise heat. Scout/Watch do not. Bribe / Call Box still cool the street.
 
-## Story beats
+## Look — full 3D, 1920s / 1930s
 
-- **Beat 0 — The Favor owed.** Eddie is Corvo’s man on the Levee. Tutorial week: Collect S02, Watch S01. Unlock full orders after results.
-- **Beat 1 — Sal wants the dock.** After 2 successful weeks (cash ≥ 100 total across weeks, player still free), Sal demands Dock Warehouse A (S03). Gate: hold S03 at week end (Watch or Collect that resolved, block owner Player). Then briefing unlocks Brickyard as “next district” stub (map marker only for now).
+- **Full 3D** world (UE meshes, lights, characters) — not flat sprites, not sparse grey cubes as the final read.
+- Period Saint Lorne: brick / sandstone façades, dark asphalt, warm tungsten street mood, fedora hoodlums, civilians in coats, period sedans.
+- Palette lock: brick reds, soot greys, cream stone, olive/navy coats, black cars. Avoid neon / modern glass.
+- Camera stays isometric ortho (Gangsters read) over a **real 3D street**, closer so people and cars read.
 
 ## Camera
 
-Fixed **isometric** view matching *Gangsters: Organized Crime*: orthographic camera, ~50° pitch, −45° yaw, pan on the ground plane, zoom changes ortho width. No free tilt. No driving in the slice. Plan assigns via keys (sites cycle Q/E); click-to-assign can come later.
+Fixed isometric (Gangsters): ortho, ~50° pitch, −45° yaw, pan + zoom. Closer default ortho so people read. No free tilt.
 
 ## Slice exit
 
-One Levee greybox, Plan → Week → Results, four orders, heat, rival script, beat 0→1. Readable from altitude.
+1. Levee reads as a **period 3D** street city (brick blocks, labels, people, cars, warm light).
+2. Click hoods anytime → dossier → street orders; free movement.
+3. Active mission panel drives story; completing M0–M1 without waiting on a week timer.
+4. Civilians wander and flee on violence.
+5. Enter car + drive-by stub works.

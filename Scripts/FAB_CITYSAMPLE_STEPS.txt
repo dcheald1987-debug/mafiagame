@@ -1,0 +1,7 @@
+City Sample Buildings (Fab)
+https://www.fab.com/listings/008fe959-5511-428e-93bd-f99b1179f6d5
+
+1. Sign in to Epic on fab.com (browser is on the login page)
+2. Click Add to My Library on City Sample Buildings
+3. In Unreal Editor: Window > Fab (or Content Browser Fab) > Add to Project > LostEmpire
+4. Tell me when the download finishes — I will run ApplyFabBuildingMeshes.py

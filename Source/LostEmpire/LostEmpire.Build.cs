@@ -17,8 +17,14 @@ public class LostEmpire : ModuleRules
 			"PhysicsCore",
 			"AIModule",
 			"NavigationSystem",
-			"UMG"
+			"UMG",
+			"Slate",
+			"SlateCore",
+			"OnlineSubsystem",
+			"OnlineSubsystemUtils"
 		});
+
+		DynamicallyLoadedModuleNames.Add("OnlineSubsystemSteam");
 
 		PublicIncludePaths.AddRange(new string[]
 		{
